@@ -2,7 +2,7 @@ package nvdcli
 
 import (
 	"github.com/urfave/cli"
-	"github.com/Nexenta/nexenta-docker-driver/nvd/daemon"
+	"github.com/qeas/nvd/nvd/daemon"
 )
 
 var (
