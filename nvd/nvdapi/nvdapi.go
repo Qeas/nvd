@@ -220,25 +220,9 @@ func (c *Client) CreateVolume(name string) (err error) {
 	c.Request("POST", "storage/filesystems", data)
 
     data = make(map[string]interface{})
-    rw := map[string]interface{} {"allow": true, "etype": "fqnip", "entity": "*",}
-    rwlist := []map[string]interface{} {rw}
-    readWriteList := map[string]interface{} {"readWriteList": rwlist}
-    data["securityContexts"] = []interface{} {readWriteList}
+    data["anon"] = "root"
     data["filesystem"] = filepath.Join(c.Path, name)
 	c.Request("POST", "nas/nfs", data)
-
-    data = make(map[string]interface{})
-	perms := []string {"list_directory", "read_data", "add_file", "write_data", "add_subdirectory",
-		"append_data", "read_xattr", "write_xattr", "execute", "delete_child", "read_attributes",
-		"write_attributes", "delete", "read_acl", "write_acl", "write_owner", "synchronize"}
-	flags := []string {"file_inherit", "dir_inherit"}
-	data["type"] = "allow"
-	data["principal"] = "everyone@"
-	data["permissions"] = perms
-	data["flags"] = flags
-	path := filepath.Join(c.Path, name)
-	url := filepath.Join("/storage/filesystems", url.QueryEscape(path), "acl")
-	_, err = c.Request("POST", url, data)
 	return err
 }
 
