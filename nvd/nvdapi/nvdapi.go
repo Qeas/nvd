@@ -233,7 +233,7 @@ func (c *Client) DeleteVolume(name string) (err error) {
 		log.Error("Volume %s does not exist.", name)
 		return err
 	}
-	path := filepath.Join(c.Path, name)
+	path := filepath.Join(c.Path, name)	
 	body, err := c.Request("DELETE",  filepath.Join("storage/filesystems/", url.QueryEscape(path)), nil)
 	if strings.Contains(string(body), "ENOENT") {
 		log.Debug("Error trying to delete volume ", name, " :", string(body))
@@ -248,7 +248,7 @@ func (c *Client) MountVolume(name string) (err error) {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
 	}
 	if out, err := exec.Command("mount", args...).CombinedOutput(); err != nil {
-		log.Debug("Error running mount command: ", err, "{", string(out), "}")
+		log.Error("Error running mount command: ", err, "{", string(out), "}")
 	}
 	return err
 }

@@ -66,7 +66,10 @@ func (d NexentaDriver) Mount(r volume.MountRequest) volume.Response {
 	d.Mutex.Lock()
 	defer d.Mutex.Unlock()
 	mnt := filepath.Join(d.Client.MountPoint, r.Name)
-	d.Client.MountVolume(r.Name)
+	err := d.Client.MountVolume(r.Name)
+	if err != nil {
+		return volume.Response{Err: err.Error()}
+	}
 	return volume.Response{Mountpoint: mnt}
 }
 
