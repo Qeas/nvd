@@ -104,7 +104,7 @@ func (c *Client) Request(method, endpoint string, data map[string]interface{}) (
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
-	log.Debug("No auth: ", resp.StatusCode, resp.Body)
+	log.Debug("No auth: ", resp.StatusCode)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
 		auth, err := c.https_auth()
 		if err != nil {
@@ -243,7 +243,7 @@ func (c *Client) DeleteVolume(name string) (err error) {
 
 func (c *Client) MountVolume(name string) (err error) {
 	log.Debug("MountVolume ", name)
-	resp, err := c.Request("GET", fmt.Sprintf("storage/filesystems/%s", filepath.Join(c.Path, name)), nil)
+	resp, err := c.Request("GET", filepath.Join("storage/filesystems", c.Path, name), nil)
 	r := make(map[string]string)
 	jsonerr := json.Unmarshal(resp, &r)
 	if (jsonerr != nil) {
