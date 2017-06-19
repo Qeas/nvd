@@ -248,7 +248,7 @@ func (c *Client) MountVolume(name string) (err error) {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
 	}
 	if out, err := exec.Command("mount", args...).CombinedOutput(); err != nil {
-		log.Error("Error running mount command: ", err, "{", string(out), "}")
+		log.Fatal("Error running mount command: ", err, "{", string(out), "}")
 	}
 	return err
 }
