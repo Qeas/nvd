@@ -104,8 +104,8 @@ func (c *Client) Request(method, endpoint string, data map[string]interface{}) (
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
-	log.Debug("No auth: ", resp.StatusCode)
 	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+		log.Debug("No auth: ", resp.StatusCode)
 		auth, err := c.https_auth()
 		if err != nil {
 			log.Error("Error while trying to https login: %s", err)
@@ -118,7 +118,6 @@ func (c *Client) Request(method, endpoint string, data map[string]interface{}) (
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", auth))
 		resp, err = client.Do(req)
-		log.Debug("With auth: ", resp.StatusCode, resp.Body)
 	}
 
 	if err != nil {
@@ -134,6 +133,7 @@ func (c *Client) Request(method, endpoint string, data map[string]interface{}) (
 	if (resp.StatusCode == 202) {
 		body, err = c.resend202(body)
 	}
+	log.Debug("With auth: ", body)
 	return body, err
 }
 
@@ -250,9 +250,9 @@ func (c *Client) MountVolume(name string) (err error) {
 	if (jsonerr != nil) {
 		log.Fatal(jsonerr)
 	}
-	log.Debug(r["mountPoint"])
-	path := r["mountPoint"].(string)
-	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, path), filepath.Join(c.MountPoint, name)}
+	// log.Debug(r["mountPoint"])
+	// path := r["mountPoint"].(string)
+	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, r["mountPoint"]), filepath.Join(c.MountPoint, name)}
 	if out, err := exec.Command("mkdir", filepath.Join(c.MountPoint, name)).CombinedOutput(); err != nil {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
 	}
