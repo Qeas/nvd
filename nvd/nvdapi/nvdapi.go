@@ -243,7 +243,7 @@ func (c *Client) DeleteVolume(name string) (err error) {
 
 func (c *Client) MountVolume(name string) (err error) {
 	log.Debug("MountVolume ", name)
-	resp, err := c.Request("GET", fmt.Sprintf("storage/filesystems/%s", filepath.Join(c.Path, name)))
+	resp, err := c.Request("GET", fmt.Sprintf("storage/filesystems/%s", filepath.Join(c.Path, name)), nil)
 	r := make(map[string]string)
 	jsonerr := json.Unmarshal(resp, &r)
 	if (jsonerr != nil) {
