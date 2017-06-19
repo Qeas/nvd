@@ -243,7 +243,14 @@ func (c *Client) DeleteVolume(name string) (err error) {
 
 func (c *Client) MountVolume(name string) (err error) {
 	log.Debug("MountVolume ", name)
-	args := []string{"-t", "nfs", fmt.Sprintf("%s:/vol/%s", c.Config.IP, filepath.Join(c.Path, name)), filepath.Join(c.MountPoint, name)}
+	resp, err := c.Request("GET", "storage/filesystems/%s", filepath.Join(c.Path, name))
+	r := make(map[string]string)
+	jsonerr := json.Unmarshal(resp, &r)
+	if (jsonerr != nil) {
+		log.Fatal(jsonerr)
+	}
+	path := r["mountPoint"]
+	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, path), filepath.Join(c.MountPoint, name)}
 	if out, err := exec.Command("mkdir", filepath.Join(c.MountPoint, name)).CombinedOutput(); err != nil {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
 	}
