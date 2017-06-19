@@ -35,7 +35,6 @@ type Config struct {
 	IP			string // server:/export, IQN, devname, 
 	Port        int16
 	Pool        string
-	MountPoint	string
 	Filesystem  string
 	Username	string
 	Password	string
@@ -76,7 +75,7 @@ func ClientAlloc(configFile string) (c *Client, err error) {
 		Endpoint: fmt.Sprintf("%s://%s:%d/", conf.RestScheme, conf.IP, conf.Port),
 		Path: filepath.Join(conf.Pool, conf.Filesystem),
 		Config:	&conf,
-		MountPoint: conf.MountPoint,
+		MountPoint: "/var/lib/nvd",
 	}
 
 	return NexentaClient, nil
