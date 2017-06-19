@@ -245,12 +245,12 @@ func (c *Client) MountVolume(name string) (err error) {
 	log.Debug("MountVolume ", name)
 	url := "storage/filesystems/" + c.Config.Pool + "%2F" + c.Config.Filesystem + "%2F" + name
 	resp, err := c.Request("GET", url, nil)
-	r := make(map[string]string)
+	r := make(map[string]interface{})
 	jsonerr := json.Unmarshal(resp, &r)
 	if (jsonerr != nil) {
 		log.Fatal(jsonerr)
 	}
-	path := r["mountPoint"]
+	path := r["mountPoint"].(string)
 	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, path), filepath.Join(c.MountPoint, name)}
 	if out, err := exec.Command("mkdir", filepath.Join(c.MountPoint, name)).CombinedOutput(); err != nil {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
