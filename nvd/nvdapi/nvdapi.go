@@ -250,6 +250,7 @@ func (c *Client) MountVolume(name string) (err error) {
 	if (jsonerr != nil) {
 		log.Fatal(jsonerr)
 	}
+	log.Debug(r)
 	path := r["mountPoint"].(string)
 	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, path), filepath.Join(c.MountPoint, name)}
 	if out, err := exec.Command("mkdir", filepath.Join(c.MountPoint, name)).CombinedOutput(); err != nil {
