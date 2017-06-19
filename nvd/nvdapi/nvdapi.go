@@ -250,7 +250,7 @@ func (c *Client) MountVolume(name string) (err error) {
 		log.Fatal(jsonerr)
 	}
 	args := []string{"-t", "nfs", fmt.Sprintf("%s:%s", c.Config.IP, r["mountPoint"]), filepath.Join(c.MountPoint, name)}
-	log.Debug("mkdir")
+	log.Debug("mkdir", filepath.Join(c.MountPoint, name))
 	if out, err := exec.Command("mkdir", filepath.Join(c.MountPoint, name)).CombinedOutput(); err != nil {
 		log.Debug("Error running mkdir command: ", err, "{", string(out), "}")
 	}
