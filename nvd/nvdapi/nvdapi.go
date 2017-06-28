@@ -75,7 +75,7 @@ func ClientAlloc(configFile string) (c *Client, err error) {
 		Endpoint: fmt.Sprintf("%s://%s:%d/", conf.RestScheme, conf.IP, conf.Port),
 		Path: filepath.Join(conf.Pool, conf.Filesystem),
 		Config:	&conf,
-		MountPoint: "/mnt",
+		MountPoint: "/var/lib/nvd",
 	}
 
 	return NexentaClient, nil
@@ -263,7 +263,14 @@ func (c *Client) MountVolume(name string) (err error) {
 
 func (c *Client) UnmountVolume(name string) (err error) {
 	log.Debug("Unmounting Volume ", name)
-	path := fmt.Sprintf("%s:/volumes/%s", c.Config.IP, filepath.Join(c.Path, name))
+	url := "storage/filesystems/" + c.Config.Pool + "%2F" + c.Config.Filesystem + "%2F" + name
+	resp, err := c.Request("GET", url, nil)
+	r := make(map[string]interface{})
+	jsonerr := json.Unmarshal(resp, &r)
+	if (jsonerr != nil) {
+		log.Fatal(jsonerr)
+	}
+	path := fmt.Sprintf("%s:%s", c.Config.IP, r["mountPoint"])
 	if out, err := exec.Command("umount", path).CombinedOutput(); err != nil {
 		err = fmt.Errorf("Error running umount command: ", err, "{", string(out), "}")
 		return err
